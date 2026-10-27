@@ -28,7 +28,13 @@ Tick **Control cursor** or press **F8** (works from any window) to turn cursor c
 - **Left button:** pinch your thumb tip against your index fingertip. Hold the pinch and move to drag; open it to release.
 - **Right button:** make a fist, curling all four fingers in. Open your hand to release.
 
-The gestures are measured from MediaPipe's 3D hand landmarks, so they don't depend on the angle of your hand. The two bars at the bottom left of the video show the pinch and fist measurements. A bar turns green while its button is held; the red mark is where it presses and the yellow mark is where it releases. The thresholds are constants at the top of `gestures.py`.
+### Scrolling
+
+Hold all four fingers straight and pressed together (the thumb doesn't matter), then move your hand up to scroll down or down to scroll up, like dragging the page on a touchscreen. The cursor stays where it was while you scroll, so the scroll goes to the window under it (or the focused window, depending on Windows' "Scroll inactive windows" setting). Spread or bend your fingers to stop. `SCROLL_GAIN` in `cursor_control.py` sets the speed, and `SCROLL_BEND` and `SCROLL_SPREAD` in `gestures.py` set how straight and how close together the fingers must be. Scrolling can't start while a button is held, and buttons can't be pressed while scrolling.
+
+### Gesture meters
+
+The gestures are measured from MediaPipe's 3D hand landmarks, so they don't depend on the angle of your hand. The three bars at the bottom left of the video show the pinch, fist and scroll-pose measurements. A bar turns green while its button is held; the red mark is where it presses and the yellow mark is where it releases. The thresholds are constants at the top of `gestures.py`.
 
 Buttons press and release the moment their threshold is crossed. To keep clicks accurate, smoothing gets much stronger as a gesture nears its threshold, so the cursor steadies where the click lands without freezing. The **Click smoothing** readout above the bars shows how much is applied. While a button is held, it's measured against the release threshold instead, so a firm pinch drags smoothly. Smoothing reaches full strength slightly before each threshold (`PINCH_LEAD` and `FIST_LEAD` in `gestures.py`), so the cursor is already steady when the click fires. `PINCH_APPROACH` and `FIST_APPROACH` set how early it starts, and `CLICK_SMOOTHING` in `hand_view.py` sets how strong it gets. Only one button can be held at a time. Held buttons are released if your hand leaves view, if you turn cursor control off, or if you close the app.
 

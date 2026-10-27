@@ -40,5 +40,15 @@ def mouse_button(button: str, down: bool) -> None:
     user32.mouse_event(down_flag if down else up_flag, 0, 0, 0, 0)
 
 
+MOUSEEVENTF_WHEEL = 0x0800
+# One notch of a standard mouse wheel.
+WHEEL_DELTA = 120
+
+
+def scroll_wheel(amount: int) -> None:
+    """Turn the vertical wheel by amount (WHEEL_DELTA per notch, positive scrolls up)."""
+    user32.mouse_event(MOUSEEVENTF_WHEEL, 0, 0, amount, 0)
+
+
 def is_key_down(virtual_key: int) -> bool:
     return bool(user32.GetAsyncKeyState(virtual_key) & 0x8000)

@@ -3,7 +3,7 @@
 Pick the camera from the dropdown. Drag the input rectangle to move it, or its corners to resize it.
 The knuckle's position inside the rectangle maps to the cursor's position on the primary monitor,
 after One Euro smoothing tuned with the sliders. Pinch thumb and index for the left button (hold to drag),
-make a fist for the right button.
+make a fist for the right button. Hold four fingers straight and together, then move the hand up or down to scroll.
 Press F8 (anywhere) to toggle cursor control. Press Q or Esc in the window to quit.
 """
 
@@ -132,17 +132,19 @@ def draw_hands(frame, result: vision.HandLandmarkerResult) -> None:
 
 
 def draw_gesture_meters(frame, detector: gestures.GestureDetector) -> None:
-    """Bars for the pinch and fist measurements, with the press (red) and release (yellow) thresholds."""
+    """Bars for the pinch, fist and scroll measurements, with the press (red) and release (yellow) thresholds."""
     h = frame.shape[0]
     rows = (
         ("Left", detector.pinch, gestures.PINCH_PRESS, gestures.PINCH_RELEASE, detector.left.pressed),
         ("Right", detector.fist, gestures.FIST_PRESS, gestures.FIST_RELEASE, detector.right.pressed),
+        ("Scroll", detector.flat, gestures.SCROLL_PRESS, gestures.SCROLL_RELEASE, detector.scroll.pressed),
     )
-    x0, bar_w, bar_h, full_scale = 80, 200, 14, 1.2
-    cv2.putText(frame, f"Click smoothing {detector.proximity:.0%}", (10, h - 62),
+    x0, bar_w, bar_h, full_scale = 80, 200, 14, 1.4
+    top = h - 2 - len(rows) * 24
+    cv2.putText(frame, f"Click smoothing {detector.proximity:.0%}", (10, top - 12),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
     for i, (name, value, press, release, pressed) in enumerate(rows):
-        y = h - 50 + i * 24
+        y = top + i * 24
         cv2.putText(frame, name, (10, y + 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
         fill = int(min(value / full_scale, 1.0) * bar_w)
         cv2.rectangle(frame, (x0, y), (x0 + fill, y + bar_h), (0, 220, 0) if pressed else (160, 160, 160), -1)
@@ -355,7 +357,7 @@ class HandViewApp:
             smoothed = None
             if result.hand_landmarks:
                 self.last_hand_time = t
-                left, right = self.gestures.update(result.hand_world_landmarks[0])
+                left, right, scrolling = self.gestures.update(result.hand_world_landmarks[0])
                 self.apply_smoothing(self.gestures.proximity)
                 knuckle = result.hand_landmarks[0][INDEX_KNUCKLE]
                 smoothed = (self.knuckle_filters[0](knuckle.x, t), self.knuckle_filters[1](knuckle.y, t))
@@ -372,7 +374,8 @@ class HandViewApp:
             if not active:
                 self.cursor.release_all()
             elif smoothed is not None:
-                self.cursor.update(rect_to_screen(self.input_rect, *smoothed), left, right)
+                self.cursor.update(rect_to_screen(self.input_rect, *smoothed), left, right,
+                                   smoothed[1] if scrolling else None)
 
             draw_input_rect(frame, self.input_rect, active)
             draw_hands(frame, result)
