@@ -1,0 +1,6 @@
+# mediapipe pulls in opencv-contrib-python, which provides cv2.
+# Don't also install opencv-python: both packages ship cv2 and clash.
+mediapipe>=1.1,<2
+pillow
+# Lists webcam names (Windows DirectShow).
+pygrabber
