@@ -20,19 +20,19 @@ MIDDLE_KNUCKLE = 9
 FINGERS = ((5, 8), (9, 12), (13, 16), (17, 20))
 
 # Thumb tip to index tip, relative to hand size.
-PINCH_PRESS = 0.3
-PINCH_RELEASE = 0.33
+PINCH_PRESS = 0.38
+PINCH_RELEASE = 0.41
 # Furthest fingertip-to-knuckle distance of the four fingers, relative to hand size.
-FIST_PRESS = 0.40
-FIST_RELEASE = 0.43
+FIST_PRESS = 0.46
+FIST_RELEASE = 0.49
 # The scroll pose is measured as a single value that is 1 at its press threshold: the larger of the
 # most bent finger's bend over SCROLL_BEND and the finger spread over SCROLL_SPREAD.
 # Bend is 1 minus knuckle-to-tip distance over the summed finger segment lengths (0 when straight).
 SCROLL_BEND = 0.10
 # Spread is the index-to-pinky fingertip span over the index-to-pinky knuckle span (about 1 when together).
 SCROLL_SPREAD = 1.3
-SCROLL_PRESS = .8
-SCROLL_RELEASE = .9
+SCROLL_PRESS = .9
+SCROLL_RELEASE = 1
 INDEX_KNUCKLE = 5
 PINKY_KNUCKLE = 17
 PINKY_TIP = 20
